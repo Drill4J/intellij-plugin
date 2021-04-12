@@ -8,14 +8,8 @@
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="Sender.SendCurrentFileAction" class="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction"
-                text="Send JSP to ENV Server" description="Send current JSP file to environment server"
-                icon="Icons.icon16">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-        </action>
         <action id="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction" class="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction"
-                text="Download and Open JaCoCo File" description="Send multiple jsp files">
+                text="Show Drill Coverage" description="Show drill coverage">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt K"/>
         </action>
@@ -24,7 +18,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable parentId="other" instance="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsConfigurable"
                              id="org.intellij.sdk.settings.AppSettingsConfigurable"
-                             displayName="JSP Reactive Settings"/>
+                             displayName="Drill4j settings"/>
         <applicationService serviceImplementation="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsState"/>
     </extensions>
 </idea-plugin>

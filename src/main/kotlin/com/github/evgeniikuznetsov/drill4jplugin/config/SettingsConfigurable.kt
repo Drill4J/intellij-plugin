@@ -20,37 +20,27 @@ class SettingsConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         return SettingsState.settings.let {
-            val modified = it.remoteFilePath != _settings.filePath
-//                    || it.useCredential != _settings.useCredentials
-                    || it.useDefaultDir != _settings.useDefaultDir || it.projectDirPath != _settings.dirPath
+            val modified = it.remoteFilePath != _settings.adminUrl
+                    || it.useDefaultDir != _settings.useDefaultDir || it.agentId != _settings.agentId || it.projectDirPath != _settings.dirPath
             modified
-//            or (checkCredential(it))
         }
     }
 
-//    private fun checkCredential(settings: SettingsState) =
-//        Credentials(_settings.login, _settings.password) != settings.credentials[Constants.credentialAttribute]
-
     override fun apply() {
         SettingsState.settings.let {
-            it.remoteFilePath = this._settings.filePath
-//            it.useCredential = this._settings.useCredentials
+            it.remoteFilePath = this._settings.adminUrl
             it.useDefaultDir = this._settings.useDefaultDir
+            it.agentId = this._settings.agentId
             it.projectDirPath = this._settings.dirPath
-//            it.credentials.set(Constants.credentialAttribute, Credentials(this._settings.login, this._settings.password))
         }
     }
 
     override fun reset() {
         SettingsState.settings.let {
-            this._settings.filePath = it.remoteFilePath
-//            this._settings.useCredentials = it.useCredential
+            this._settings.adminUrl = it.remoteFilePath
             this._settings.useDefaultDir = it.useDefaultDir
+            it.agentId = this._settings.agentId
             this._settings.dirPath = it.projectDirPath
-//            it.credentials[Constants.credentialAttribute].let { cred ->
-//                this._settings.login = cred?.userName ?: "Please, input your login"
-//                this._settings.password = cred?.getPasswordAsString() ?: ""
-//            }
         }
     }
 }

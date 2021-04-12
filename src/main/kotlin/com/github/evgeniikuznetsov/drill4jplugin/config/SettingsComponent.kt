@@ -1,6 +1,5 @@
 package com.github.evgeniikuznetsov.drill4jplugin.config
 
-import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
@@ -14,31 +13,20 @@ class SettingsComponent {
 //    private val _remotePassword = JBPasswordField()
 //    private val _useCredential = JBCheckBox("the credentials are above")
     private val _useDefaultDir = JBCheckBox("in project dir")
-    private val _remoteFileUrl = JBTextField()
+    private val _adminUrl = JBTextField()
     private val _projectDirPath = JBTextField()
+    private val _agentId = JBTextField()
 
-//    var login: String
-//        get() = _remoteLogin.text
-//        set(newText) {
-//            _remoteLogin.text = newText
-//        }
-//
-//    var password: String
-//        get() = _remotePassword.text.let { if (it.isNotBlank()) "your password" else it }
-//        set(newText) {
-//            _remotePassword.text = newText
-//        }
-
-//    var useCredentials: Boolean
-//        get() = _useCredential.isSelected
-//        set(boolean) {
-//            _useCredential.isSelected = !boolean
-//        }
-
-    var filePath: String
-        get() = _remoteFileUrl.text
+    var adminUrl: String
+        get() = _adminUrl.text
         set(newText) {
-            _remoteFileUrl.text = newText
+            _adminUrl.text = newText
+        }
+
+    var agentId: String
+        get() = _agentId.text
+        set(newText) {
+            _agentId.text = newText
         }
 
     var dirPath: String
@@ -56,18 +44,13 @@ class SettingsComponent {
     init {
         panel = panel {
             titledRow("Drill4j plugin settings") {
-                row("Remote file url: ") {
-                    _remoteFileUrl()
+                row("Admin Url: ") {
+                    _adminUrl()
                 }
-//                row("Login: ") {
-//                    _remoteLogin()
-//                }
-//                row("Password: ") {
-//                    _remotePassword()
-//                }
-//                row("Don't use credential") {
-//                    _useCredential()
-//                }
+                row("Agent Id: ") {
+                    _agentId()
+                }
+
                 row("Project dir path for save file: ") {
                     _projectDirPath().enableIf(_useDefaultDir.noSelected)
                 }

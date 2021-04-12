@@ -1,21 +1,14 @@
 package com.github.evgeniikuznetsov.drill4jplugin.config
 
-import com.github.evgeniikuznetsov.drill4jplugin.config.constants.FtpTypes
-import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.util.xmlb.XmlSerializerUtil
+import com.intellij.openapi.components.*
+import com.intellij.util.xmlb.*
 
 @State(name = "com.epam.plugins.jspreact.configuration.AppSettingsState", storages = [Storage("Drill4jPluginsStorage.xml")])
 class SettingsState : PersistentStateComponent<SettingsState?> {
-    var remoteFilePath = "Please, input path to coverage file"
-    var useCredential = false
+    var remoteFilePath = "http://admin-url:8090"
     var useDefaultDir = false
-    var projectDirPath = "Please, input path to dir to download file"
-    val credentials
-        get() = PasswordSafe.instance
+    var agentId = "zeyt"
+    var projectDirPath = "Please, specify the file path"
 
     override fun getState(): SettingsState {
         return this
