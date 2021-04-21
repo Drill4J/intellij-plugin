@@ -39,7 +39,7 @@ class SettingsConfigurable : Configurable {
         SettingsState.settings.let {
             this._settings.adminUrl = it.remoteFilePath
             this._settings.useDefaultDir = it.useDefaultDir
-            it.agentId = this._settings.agentId
+            this._settings.agentId = it.agentId
             this._settings.dirPath = it.projectDirPath
         }
     }
