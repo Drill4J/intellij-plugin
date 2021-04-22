@@ -60,7 +60,12 @@ tasks {
         targetCompatibility = "1.8"
     }
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = listOf(
+                "-Xuse-experimental=kotlin.ExperimentalStdlibAp"
+            )
+        }
     }
 
     patchPluginXml {

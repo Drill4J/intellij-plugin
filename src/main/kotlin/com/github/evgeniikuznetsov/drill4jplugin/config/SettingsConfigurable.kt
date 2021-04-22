@@ -1,8 +1,8 @@
 package com.github.evgeniikuznetsov.drill4jplugin.config
 
-import com.intellij.openapi.options.Configurable
-import org.jetbrains.annotations.Nls
-import javax.swing.JComponent
+import com.intellij.openapi.options.*
+import org.jetbrains.annotations.*
+import javax.swing.*
 
 class SettingsConfigurable : Configurable {
     private lateinit var _settings: SettingsComponent
@@ -19,28 +19,35 @@ class SettingsConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        return SettingsState.settings.let {
-            val modified = it.remoteFilePath != _settings.adminUrl
-                    || it.useDefaultDir != _settings.useDefaultDir || it.agentId != _settings.agentId || it.projectDirPath != _settings.dirPath
-            modified
+        return SettingsState.settings.run {
+            remoteFilePath != _settings.adminUrl ||
+                   // useDefaultDir != _settings.useDefaultDir ||
+                    agentId != _settings.agentId ||
+                    projectDirPath != _settings.dirPath ||
+                    fromLocalFile != _settings.fromLocalFile ||
+                    pathToExistedFile != _settings.pathToExistedFile
         }
     }
 
     override fun apply() {
-        SettingsState.settings.let {
-            it.remoteFilePath = this._settings.adminUrl
-            it.useDefaultDir = this._settings.useDefaultDir
-            it.agentId = this._settings.agentId
-            it.projectDirPath = this._settings.dirPath
+        SettingsState.settings.run {
+            remoteFilePath = _settings.adminUrl
+           // useDefaultDir = _settings.useDefaultDir
+            agentId = _settings.agentId
+            projectDirPath = _settings.dirPath
+            fromLocalFile = _settings.fromLocalFile
+            pathToExistedFile = _settings.pathToExistedFile
         }
     }
 
     override fun reset() {
-        SettingsState.settings.let {
-            this._settings.adminUrl = it.remoteFilePath
-            this._settings.useDefaultDir = it.useDefaultDir
-            this._settings.agentId = it.agentId
-            this._settings.dirPath = it.projectDirPath
+        SettingsState.settings.run {
+            _settings.adminUrl = remoteFilePath
+            //_settings.useDefaultDir = useDefaultDir
+            _settings.agentId = agentId
+            _settings.dirPath = projectDirPath
+            _settings.fromLocalFile = fromLocalFile
+            _settings.pathToExistedFile = pathToExistedFile
         }
     }
 }
