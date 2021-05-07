@@ -1,10 +1,7 @@
 package com.github.evgeniikuznetsov.drill4jplugin.config
 
-import com.intellij.ide.impl.*
-import com.intellij.openapi.actionSystem.*
+import com.github.evgeniikuznetsov.drill4jplugin.util.*
 import com.intellij.openapi.components.*
-import com.intellij.openapi.externalSystem.autoimport.*
-import com.intellij.openapi.project.*
 import com.intellij.util.xmlb.*
 
 @State(name = "com.epam.plugins.drill4j.configuration.AppSettingsState",
@@ -13,7 +10,8 @@ class SettingsState : PersistentStateComponent<SettingsState?> {
     var remoteFilePath = "http://admin-url:8090"
     //  var useDefaultDir = false
     var agentId = "ap02"
-    var projectDirPath = "Please, specify the file path"
+    var buildVersion = "0.0.1"
+    var projectDirPath = getProjectPath()
     var fromLocalFile = true
     var pathToExistedFile = "Please, specify the path to local coverage file"
 

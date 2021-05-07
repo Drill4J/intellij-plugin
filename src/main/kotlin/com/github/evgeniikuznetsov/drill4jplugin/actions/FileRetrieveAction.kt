@@ -4,6 +4,7 @@ import com.github.evgeniikuznetsov.drill4jplugin.config.*
 import com.github.evgeniikuznetsov.drill4jplugin.tools.*
 import com.intellij.codeInspection.ex.*
 import com.intellij.coverage.*
+import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.*
@@ -46,8 +47,9 @@ class FileRetrieveAction : AnAction() {
     private fun getCoverageFromRemoteHost(event: AnActionEvent) {
         val remotePath = SettingsState.settings.remoteFilePath
         val agentId = SettingsState.settings.agentId
-        val jacocoPath = "${SettingsState.settings.projectDirPath}/jacoco.exec"
-        val socketFileRetriever = UrlFileRetriever(remotePath, agentId, jacocoPath)
+        val buildVersion = SettingsState.settings.buildVersion
+        val jacocoPath = "${SettingsState.settings.projectDirPath}\\jacoco.exec"
+        val socketFileRetriever = UrlFileRetriever(remotePath, agentId, buildVersion, jacocoPath)
 
         val project = event.getRequiredData(CommonDataKeys.PROJECT)
 
@@ -82,24 +84,30 @@ class FileRetrieveAction : AnAction() {
         val extension = CoverageEngine.EP_NAME.extensions.first {
             "$it".contains("com.intellij.coverage.JavaCoverageEngine")
         }
-
-        val coverageRunner = CoverageRunner.EP_NAME.extensionList.find { it.dataFileExtension == "exec" }
-            ?: throw NoSuchElementException("Collection contains no element matching the predicate.")
-        extension.createCoverageSuite(
-            coverageRunner, "Drill4j Plugin", DefaultCoverageFileProvider(File(saveDir)),
-            arrayOfNulls(0),
-            System.currentTimeMillis(),
-            null,
-            true,
-            true,
-            false,
-            project
-        )?.let { cs ->
-            cs.setCoverageData(coverageRunner.loadCoverageData(execFile, cs))
-            CoverageSuitesBundle(arrayOf(cs)).let {
-                extension.getCoverageAnnotator(project).renewCoverageData(it,
-                    CoverageDataManager.getInstance(project).also { cdm -> cdm.chooseSuitesBundle(it) })
+        runCatching {
+            val coverageRunner = CoverageRunner.EP_NAME.extensionList.find { it.dataFileExtension == "exec" }
+                ?: throw NoSuchElementException("Collection contains no element matching the predicate.")
+            extension.createCoverageSuite(
+                coverageRunner, "Drill4j Plugin", DefaultCoverageFileProvider(File(saveDir)),
+                arrayOfNulls(0),
+                System.currentTimeMillis(),
+                null,
+                true,
+                true,
+                false,
+                project
+            )?.let { cs ->
+                cs.setCoverageData(coverageRunner.loadCoverageData(execFile, cs))
+                CoverageSuitesBundle(arrayOf(cs)).let {
+                    extension.getCoverageAnnotator(project).renewCoverageData(it,
+                        CoverageDataManager.getInstance(project).also { cdm -> cdm.chooseSuitesBundle(it) })
+                }
             }
+        }.onFailure {
+            GlobalInspectionContextImpl.NOTIFICATION_GROUP.createNotification(
+                "${it.message}",
+                NotificationType.ERROR
+            ).notify(project)
         }
     }
 
