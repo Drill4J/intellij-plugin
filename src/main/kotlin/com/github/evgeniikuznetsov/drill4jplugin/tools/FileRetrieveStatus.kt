@@ -44,7 +44,7 @@ fun setNotificationStatus(
     additionalMessage: String? = null,
 ): FileRetrieveStatus {
     return status.also {
-        it.message = ObjectUtils.defaultIfNull(message, it.message)
-        it.additionalMessage = ObjectUtils.defaultIfNull(additionalMessage, it.additionalMessage)
+        it.message = message ?: it.message
+        it.additionalMessage = additionalMessage ?: it.additionalMessage
     }
 }

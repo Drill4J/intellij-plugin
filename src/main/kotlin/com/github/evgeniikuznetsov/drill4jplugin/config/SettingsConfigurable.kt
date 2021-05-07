@@ -21,8 +21,9 @@ class SettingsConfigurable : Configurable {
     override fun isModified(): Boolean {
         return SettingsState.settings.run {
             remoteFilePath != _settings.adminUrl ||
-                   // useDefaultDir != _settings.useDefaultDir ||
+                    // useDefaultDir != _settings.useDefaultDir ||
                     agentId != _settings.agentId ||
+                    buildVersion != _settings.buildVersion ||
                     projectDirPath != _settings.dirPath ||
                     fromLocalFile != _settings.fromLocalFile ||
                     pathToExistedFile != _settings.pathToExistedFile
@@ -32,8 +33,9 @@ class SettingsConfigurable : Configurable {
     override fun apply() {
         SettingsState.settings.run {
             remoteFilePath = _settings.adminUrl
-           // useDefaultDir = _settings.useDefaultDir
+            // useDefaultDir = _settings.useDefaultDir
             agentId = _settings.agentId
+            buildVersion = _settings.buildVersion
             projectDirPath = _settings.dirPath
             fromLocalFile = _settings.fromLocalFile
             pathToExistedFile = _settings.pathToExistedFile
@@ -45,6 +47,7 @@ class SettingsConfigurable : Configurable {
             _settings.adminUrl = remoteFilePath
             //_settings.useDefaultDir = useDefaultDir
             _settings.agentId = agentId
+            _settings.buildVersion = buildVersion
             _settings.dirPath = projectDirPath
             _settings.fromLocalFile = fromLocalFile
             _settings.pathToExistedFile = pathToExistedFile

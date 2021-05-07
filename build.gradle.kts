@@ -1,8 +1,10 @@
-import org.jetbrains.changelog.closure
-import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.changelog.*
+import org.jetbrains.kotlin.gradle.tasks.*
 
 fun properties(key: String) = project.findProperty(key).toString()
+
+val test2codeApiVersion: String by rootProject
+val serializationRuntimeVersion: String by rootProject
 
 plugins {
     // Java support
@@ -13,6 +15,8 @@ plugins {
     id("org.jetbrains.intellij") version "0.7.2"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
     id("org.jetbrains.changelog") version "1.1.2"
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.4.31"
 }
 
 group = properties("pluginGroup")
@@ -20,10 +24,17 @@ version = properties("pluginVersion")
 
 // Configure project's dependencies
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
+    maven(url = "https://drill4j.jfrog.io/artifactory/drill")
 }
+
 dependencies {
+
+    implementation("com.epam.drill.plugins.test2code:api:$test2codeApiVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationRuntimeVersion")
+
     implementation("org.testng:testng:6.14.3")
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
     api("io.ktor:ktor-client-core:1.5.3")
