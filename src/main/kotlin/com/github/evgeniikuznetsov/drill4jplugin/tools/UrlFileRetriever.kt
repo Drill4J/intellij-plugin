@@ -18,27 +18,44 @@ class UrlFileRetriever(
 ) {
     fun retrieveFile(): FileRetrieveStatus {
         val file = File(fileDirectory)
-        try {
+        runCatching {
             if (!file.createNewFile() && !file.exists()) {
                 return setNotificationStatus(status = FileRetrieveStatus.CAN_NOT_CREATE_FILE,
                     additionalMessage = fileDirectory)
             }
             HttpClients.createDefault().use { client ->
                 val token = client.getToken(url)
+                client.getAgentIds(url).takeIf {
+                    it.contains(agentId)
+                } ?: return setNotificationStatus(
+                    status = FileRetrieveStatus.AGENT_NOT_FOUND,
+                    additionalMessage = agentId)
+                client.getBuildVersions(url, agentId).takeIf {
+                    it.contains(buildVersion)
+                } ?: return setNotificationStatus(
+                    status = FileRetrieveStatus.BUILD_NOT_FOUND,
+                    additionalMessage = buildVersion
+                )
                 val response = client.getCoverageFromTest2code(token, url, agentId, buildVersion)
                 val inputStream = response.entity.content
                 FileUtils.copyInputStreamToFile(inputStream, file)
             }
-
-        } catch (e: MalformedURLException) {
-            e.printStackTrace()
+        }.onFailure {
             if (file.exists()) {
                 file.delete()
             }
-            return setNotificationStatus(status = FileRetrieveStatus.REMOTE_URL_NOT_FOUND, additionalMessage = url)
-        } catch (e: IOException) {
-            val message = "${e.message}.\nurl: '$url', agentId: '$agentId', fileDirectory: '$fileDirectory'"
-            return setNotificationStatus(status = FileRetrieveStatus.CAN_NOT_GET_FILE, message = message)
+            return when (it) {
+                is MalformedURLException -> {
+                    setNotificationStatus(status = FileRetrieveStatus.REMOTE_URL_NOT_FOUND,
+                        additionalMessage = url)
+                }
+                is IOException -> {
+                    val message = "${it.message}.\nurl: '$url', agentId: '$agentId', fileDirectory: '$fileDirectory'"
+                    setNotificationStatus(status = FileRetrieveStatus.CAN_NOT_GET_FILE, message = message)
+                }
+                else -> setNotificationStatus(status = FileRetrieveStatus.UNKNOWN_EXCEPTION,
+                    additionalMessage = it.message)
+            }
         }
 
         return setNotificationStatus(status = FileRetrieveStatus.SUCCESS, additionalMessage = fileDirectory)

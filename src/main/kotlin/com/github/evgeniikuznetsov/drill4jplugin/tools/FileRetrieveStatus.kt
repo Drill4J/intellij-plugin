@@ -19,6 +19,16 @@ enum class FileRetrieveStatus(
             return String.format(message, additionalMessage)
         }
     },
+    AGENT_NOT_FOUND("Agent %s not found", NotificationType.ERROR, null) {
+        override fun message(): String {
+            return String.format(message, additionalMessage)
+        }
+    },
+    BUILD_NOT_FOUND("Build %s not found", NotificationType.ERROR, null) {
+        override fun message(): String {
+            return String.format(message, additionalMessage)
+        }
+    },
     CAN_NOT_CREATE_FILE("Can not create file to directory %s", NotificationType.ERROR, null) {
         override fun message(): String {
             return String.format(message, additionalMessage)
@@ -32,6 +42,11 @@ enum class FileRetrieveStatus(
     CAN_NOT_FIND_FILE("Can not find the file. Please check local file path", NotificationType.ERROR, null) {
         override fun message(): String {
             return message
+        }
+    },
+    UNKNOWN_EXCEPTION("Exception: ", NotificationType.ERROR, null) {
+        override fun message(): String {
+            return String.format(message, additionalMessage)
         }
     };
 
