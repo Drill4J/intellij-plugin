@@ -25,17 +25,6 @@ class UrlFileRetriever(
             }
             HttpClients.createDefault().use { client ->
                 val token = client.getToken(url)
-                client.getAgentIds(url).takeIf {
-                    it.contains(agentId)
-                } ?: return setNotificationStatus(
-                    status = FileRetrieveStatus.AGENT_NOT_FOUND,
-                    additionalMessage = agentId)
-                client.getBuildVersions(url, agentId).takeIf {
-                    it.contains(buildVersion)
-                } ?: return setNotificationStatus(
-                    status = FileRetrieveStatus.BUILD_NOT_FOUND,
-                    additionalMessage = buildVersion
-                )
                 val response = client.getCoverageFromTest2code(token, url, agentId, buildVersion)
                 val inputStream = response.entity.content
                 FileUtils.copyInputStreamToFile(inputStream, file)
@@ -60,5 +49,26 @@ class UrlFileRetriever(
 
         return setNotificationStatus(status = FileRetrieveStatus.SUCCESS, additionalMessage = fileDirectory)
     }
+
+    fun validate(): FileRetrieveStatus {
+        HttpClients.createDefault().use { client ->
+            client.getAgentIds(url).takeIf {
+                it.contains(agentId)
+            } ?: return setNotificationStatus(
+                status = FileRetrieveStatus.AGENT_NOT_FOUND,
+                additionalMessage = agentId)
+            client.getBuildVersions(url, agentId).takeIf {
+                it.contains(buildVersion)
+            } ?: return setNotificationStatus(
+                status = FileRetrieveStatus.BUILD_NOT_FOUND,
+                additionalMessage = buildVersion
+            )
+        }
+        return setNotificationStatus(
+            status = FileRetrieveStatus.SUCCESS,
+            message = "Connected"
+        )
+    }
+
 
 }

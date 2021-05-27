@@ -49,29 +49,43 @@ class FileRetrieveAction : AnAction() {
         val agentId = SettingsState.settings.agentId
         val buildVersion = SettingsState.settings.buildVersion
         val jacocoPath = "${SettingsState.settings.projectDirPath}\\jacoco.exec"
-        val socketFileRetriever = UrlFileRetriever(remotePath, agentId, buildVersion, jacocoPath)
+        val coverageFileRetriever = UrlFileRetriever(remotePath, agentId, buildVersion, jacocoPath)
 
         val project = event.getRequiredData(CommonDataKeys.PROJECT)
 
-        ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Download file") {
+        ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Connecting") {
             override fun run(indicator: ProgressIndicator) {
-                indicator.text = "Download .exec file"
-
-                socketFileRetriever.retrieveFile().let {
+                indicator.text = "Connection to $remotePath"
+                coverageFileRetriever.validate().let {
                     GlobalInspectionContextImpl.NOTIFICATION_GROUP.createNotification(
                         it.message(),
                         it.notificationType
                     ).notify(project)
+                    if (it.notificationType == NotificationType.ERROR) {
+                        indicator.cancel()
+                    }
                 }
             }
+            override fun onSuccess() {
+                ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Download file") {
+                    override fun run(indicator: ProgressIndicator) {
+                        indicator.text = "Download .exec file"
+                        coverageFileRetriever.retrieveFile().let {
+                            GlobalInspectionContextImpl.NOTIFICATION_GROUP.createNotification(
+                                it.message(),
+                                it.notificationType
+                            ).notify(project)
+                        }
+                    }
 
-            override fun onFinished() {
-                super.onFinished()
-                val execFile = File(jacocoPath)
-                if (!execFile.exists()) {
-                    return
-                }
-                displayCoverageFromFile(jacocoPath, project, execFile)
+                    override fun onFinished() {
+                        val execFile = File(jacocoPath)
+                        if (!execFile.exists()) {
+                            return
+                        }
+                        displayCoverageFromFile(jacocoPath, project, execFile)
+                    }
+                })
             }
         })
     }
