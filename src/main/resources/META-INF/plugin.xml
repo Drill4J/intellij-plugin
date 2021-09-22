@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.evgeniikuznetsov.drill4jplugin</id>
-    <name>Drill-Plugin</name>
+    <name>Drill4j</name>
     <vendor>evgeniikuznetsov</vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -8,17 +8,21 @@
     <depends>com.intellij.modules.platform</depends>
 
     <actions>
-        <action id="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction" class="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction"
-                text="Show Drill Coverage" description="Show drill coverage">
+        <action id="FileRetrieveAction"
+                class="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction"
+                text="Show Drill Coverage" description="Show drill coverage by settings">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt K"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable parentId="other" instance="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsConfigurable"
-                             id="org.intellij.sdk.settings.AppSettingsConfigurable"
-                             displayName="Drill4j settings"/>
+        <!--        todo maybe changed parentId for setting?-->
+        <!--        parentId="tools"-->
+        <projectConfigurable parentId="other"
+                             instance="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsConfigurable"
+                             id="com.drill.AppSettingsConfigurable"
+                             displayName="Drill4j Settings"/>
         <applicationService serviceImplementation="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsState"/>
     </extensions>
 </idea-plugin>

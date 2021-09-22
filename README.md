@@ -38,3 +38,37 @@ To keep everything working, do not remove `<!-- ... -->` sections.
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
+
+# Intro info
+
+This plugin takes build coverage from Drill4j Admin and show it on the code.
+Based on the plugin https://www.jetbrains.com/help/idea/code-coverage.html
+
+## How to use
+### First
+1) Checkout to branch/tag where want to see coverage
+2) Compile project
+2) File -> Settings -> Other settings -> Drill4j settings
+  1) Set/choose configs
+2) Tools -> Show Drill Coverage OR ctrl + shift + alt + k
+
+## Development
+### Create artifacts
+```
+gradle buildPlugin
+```
+folder: build/distributions
+
+### Testing
+
+run IDE with plugin
+
+```
+gradle runIde
+```
+
+Check coverage:
+1) Run -> Show code coverage OR ctrl + alt + 6
+2) Click + and choose *.exec file
+3) Compare coverage
+
