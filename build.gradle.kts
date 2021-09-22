@@ -5,11 +5,12 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 val test2codeApiVersion: String by rootProject
 val serializationRuntimeVersion: String by rootProject
+val ktorVersion: String by rootProject
+val kotlinVersion: String by rootProject
 
 plugins {
-    // Java support
+//todo pluginManagement ?
     id("java")
-    // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "1.4.31"
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "0.7.2"
@@ -22,7 +23,6 @@ plugins {
 group = properties("pluginGroup")
 version = properties("pluginVersion")
 
-// Configure project's dependencies
 repositories {
     mavenLocal()
     mavenCentral()
@@ -35,13 +35,9 @@ dependencies {
     implementation("com.epam.drill.plugins.test2code:api:$test2codeApiVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationRuntimeVersion")
 
-    implementation("org.testng:testng:6.14.3")
-    implementation("org.junit.jupiter:junit-jupiter:5.4.2")
-    api("io.ktor:ktor-client-core:1.5.3")
-//    implementation("io.ktor:ktor-client-cio:1.5.3")
-    api("io.ktor:ktor-client-apache:1.5.3")
-    api("io.ktor:ktor-client-serialization:1.5.3")
-    testImplementation(kotlin("test-js"))
+    api("io.ktor:ktor-client-core:$ktorVersion")
+    api("io.ktor:ktor-client-apache:$ktorVersion")
+    api("io.ktor:ktor-client-serialization:$ktorVersion")
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -65,7 +61,6 @@ changelog {
 }
 
 tasks {
-    // Set the compatibility versions to 1.8
     withType<JavaCompile> {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
