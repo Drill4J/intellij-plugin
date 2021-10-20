@@ -1,17 +1,26 @@
-package com.github.evgeniikuznetsov.drill4jplugin.actions
+package com.epam.drill.idea.plugin.actions
 
-import com.github.evgeniikuznetsov.drill4jplugin.config.*
-import com.github.evgeniikuznetsov.drill4jplugin.tools.*
+import com.epam.drill.idea.plugin.config.*
+import com.epam.drill.idea.plugin.tools.*
 import com.intellij.codeInspection.ex.*
 import com.intellij.coverage.*
 import com.intellij.notification.*
+import com.intellij.openapi.*
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.*
 import java.io.*
 import java.nio.file.*
 
 class FileRetrieveAction : AnAction() {
+
+    private val extension = CoverageEngine.EP_NAME.extensions.first {
+        "$it".contains("com.intellij.coverage.JavaCoverageEngine")
+    }
+
+    private val coverageRunners = CoverageRunner.EP_NAME.extensionList
+
 
     override fun actionPerformed(event: AnActionEvent) {
         if (!SettingsState.settings.fromLocalFile) {
@@ -81,11 +90,9 @@ class FileRetrieveAction : AnAction() {
         project: Project,
         execFile: File,
     ) {
-        val extension = CoverageEngine.EP_NAME.extensions.first {
-            "$it".contains("com.intellij.coverage.JavaCoverageEngine")
-        }
+
         runCatching {
-            val coverageRunner = CoverageRunner.EP_NAME.extensionList.find { it.dataFileExtension == "exec" }
+            val coverageRunner = coverageRunners.find { it.dataFileExtension == "exec" }
                 ?: throw NoSuchElementException("Collection contains no element matching the predicate.")
             extension.createCoverageSuite(
                 coverageRunner, "Drill4j Plugin", DefaultCoverageFileProvider(File(saveDir)),
@@ -100,7 +107,10 @@ class FileRetrieveAction : AnAction() {
                 cs.setCoverageData(coverageRunner.loadCoverageData(execFile, cs))
                 CoverageSuitesBundle(arrayOf(cs)).let {
                     extension.getCoverageAnnotator(project).renewCoverageData(it,
-                        CoverageDataManager.getInstance(project).also { cdm -> cdm.chooseSuitesBundle(it) })
+                        CoverageDataManager.getInstance(project).also { cdm ->
+                            cdm.chooseSuitesBundle(it)
+                            cdm.addSuiteListener(HideCoverageListener(project), cdm as Disposable)
+                        })
                 }
             }
         }.onFailure {
@@ -111,4 +121,29 @@ class FileRetrieveAction : AnAction() {
         }
     }
 
+}
+
+class HideCoverageListener(
+    private val project: Project,
+) : CoverageSuiteListener {
+
+    override fun afterSuiteChosen() {
+        val fileEditorManager = FileEditorManager.getInstance(project)
+        val openFiles = fileEditorManager.openFiles
+        openFiles.filterNotNull().forEach { openFile ->
+            fileEditorManager.getAllEditors(openFile).filter { it as? TextEditor != null }.forEach {
+                (it as TextEditor).editor.settings.isLineMarkerAreaShown = true
+            }
+        }
+    }
+
+    override fun beforeSuiteChosen() {
+        val fileEditorManager = FileEditorManager.getInstance(project)
+        val openFiles = fileEditorManager.openFiles
+        openFiles.filterNotNull().forEach { openFile ->
+            fileEditorManager.getAllEditors(openFile).filter { it as? TextEditor != null }.forEach {
+                (it as TextEditor).editor.settings.isLineMarkerAreaShown = false
+            }
+        }
+    }
 }

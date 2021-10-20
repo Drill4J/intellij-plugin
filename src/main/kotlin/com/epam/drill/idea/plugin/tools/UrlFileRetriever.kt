@@ -1,6 +1,6 @@
-package com.github.evgeniikuznetsov.drill4jplugin.tools
+package com.epam.drill.idea.plugin.tools
 
-import com.github.evgeniikuznetsov.drill4jplugin.util.*
+import com.epam.drill.idea.plugin.util.*
 import com.intellij.openapi.diagnostic.*
 import org.apache.commons.io.*
 import org.apache.http.impl.client.*

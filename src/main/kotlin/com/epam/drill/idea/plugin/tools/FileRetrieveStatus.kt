@@ -1,7 +1,6 @@
-package com.github.evgeniikuznetsov.drill4jplugin.tools
+package com.epam.drill.idea.plugin.tools
 
 import com.intellij.notification.*
-import org.apache.commons.lang3.*
 
 enum class FileRetrieveStatus(
     var message: String,

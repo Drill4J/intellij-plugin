@@ -1,4 +1,4 @@
-package com.github.evgeniikuznetsov.drill4jplugin.util
+package com.epam.drill.idea.plugin.util
 
 import com.epam.drill.plugins.test2code.api.*
 import com.intellij.openapi.project.*
