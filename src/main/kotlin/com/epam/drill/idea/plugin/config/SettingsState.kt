@@ -1,6 +1,6 @@
-package com.github.evgeniikuznetsov.drill4jplugin.config
+package com.epam.drill.idea.plugin.config
 
-import com.github.evgeniikuznetsov.drill4jplugin.util.*
+import com.epam.drill.idea.plugin.util.*
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.*
 

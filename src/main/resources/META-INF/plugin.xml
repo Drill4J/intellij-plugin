@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.github.evgeniikuznetsov.drill4jplugin</id>
+    <id>com.epam.drill.idea.plugin</id>
     <name>Drill4j</name>
     <vendor>evgeniikuznetsov</vendor>
 
@@ -9,7 +9,7 @@
 
     <actions>
         <action id="FileRetrieveAction"
-                class="com.github.evgeniikuznetsov.drill4jplugin.actions.FileRetrieveAction"
+                class="com.epam.drill.idea.plugin.actions.FileRetrieveAction"
                 text="Show Drill Coverage" description="Show drill coverage by settings">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt K"/>
@@ -20,9 +20,9 @@
         <!--        todo maybe changed parentId for setting?-->
         <!--        parentId="tools"-->
         <projectConfigurable parentId="other"
-                             instance="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsConfigurable"
+                             instance="com.epam.drill.idea.plugin.config.SettingsConfigurable"
                              id="com.drill.AppSettingsConfigurable"
                              displayName="Drill4j Settings"/>
-        <applicationService serviceImplementation="com.github.evgeniikuznetsov.drill4jplugin.config.SettingsState"/>
+        <applicationService serviceImplementation="com.epam.drill.idea.plugin.config.SettingsState"/>
     </extensions>
 </idea-plugin>

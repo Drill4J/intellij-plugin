@@ -1,4 +1,4 @@
-package com.github.evgeniikuznetsov.drill4jplugin.config
+package com.epam.drill.idea.plugin.config
 
 import com.intellij.openapi.options.*
 import org.jetbrains.annotations.*
