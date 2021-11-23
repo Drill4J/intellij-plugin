@@ -7,7 +7,7 @@ import com.intellij.util.xmlb.*
 @State(name = "com.epam.plugins.drill4j.configuration.AppSettingsState",
     storages = [Storage("Drill4jPluginsStorage.xml")])
 class SettingsState : PersistentStateComponent<SettingsState?> {
-    var remoteFilePath = "http://admin-url:8090"
+    var adminUrl = "http://admin-url:8090"
     //  var useDefaultDir = false
     var agentId = "ap02"
     var buildVersion = "0.0.1"

@@ -14,14 +14,13 @@ class UrlFileRetriever(
     private val url: String,
     private val agentId: String,
     private val buildVersion: String,
-    private val fileDirectory: String,
+    private val file: File,
 ) {
     fun retrieveFile(): FileRetrieveStatus {
-        val file = File(fileDirectory)
         runCatching {
             if (!file.createNewFile() && !file.exists()) {
                 return setNotificationStatus(status = FileRetrieveStatus.CAN_NOT_CREATE_FILE,
-                    additionalMessage = fileDirectory)
+                    additionalMessage = file.absolutePath)
             }
             HttpClients.createDefault().use { client ->
                 val token = client.getToken(url)
@@ -50,7 +49,7 @@ class UrlFileRetriever(
                         additionalMessage = url)
                 }
                 is IOException -> {
-                    val message = "${it.message}.\nurl: '$url', agentId: '$agentId', fileDirectory: '$fileDirectory'"
+                    val message = "${it.message}.\nurl: '$url', agentId: '$agentId', fileDirectory: '${this.file}'"
                     setNotificationStatus(status = FileRetrieveStatus.CAN_NOT_GET_FILE, message = message)
                 }
                 else -> setNotificationStatus(status = FileRetrieveStatus.UNKNOWN_EXCEPTION,
@@ -58,7 +57,7 @@ class UrlFileRetriever(
             }
         }
 
-        return setNotificationStatus(status = FileRetrieveStatus.SUCCESS, additionalMessage = fileDirectory)
+        return setNotificationStatus(status = FileRetrieveStatus.SUCCESS, additionalMessage = file.absolutePath)
     }
 
 }
