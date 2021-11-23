@@ -54,11 +54,11 @@ class FileRetrieveAction : AnAction() {
     }
 
     private fun getCoverageFromRemoteHost(event: AnActionEvent) {
-        val remotePath = SettingsState.settings.remoteFilePath
+        val adminUrl = SettingsState.settings.adminUrl
         val agentId = SettingsState.settings.agentId
         val buildVersion = SettingsState.settings.buildVersion
-        val jacocoPath = "${SettingsState.settings.projectDirPath}\\jacoco.exec"
-        val socketFileRetriever = UrlFileRetriever(remotePath, agentId, buildVersion, jacocoPath)
+        val jacocoPath = File(SettingsState.settings.projectDirPath).resolve("jacoco.exec")
+        val socketFileRetriever = UrlFileRetriever(adminUrl, agentId, buildVersion, jacocoPath)
 
         val project = event.getRequiredData(CommonDataKeys.PROJECT)
 
@@ -75,12 +75,7 @@ class FileRetrieveAction : AnAction() {
             }
 
             override fun onFinished() {
-                super.onFinished()
-                val execFile = File(jacocoPath)
-                if (!execFile.exists()) {
-                    return
-                }
-                displayCoverageFromFile(jacocoPath, project, execFile)
+                displayCoverageFromFile(SettingsState.settings.projectDirPath, project, jacocoPath)
             }
         })
     }
@@ -128,21 +123,20 @@ class HideCoverageListener(
 ) : CoverageSuiteListener {
 
     override fun afterSuiteChosen() {
-        val fileEditorManager = FileEditorManager.getInstance(project)
-        val openFiles = fileEditorManager.openFiles
-        openFiles.filterNotNull().forEach { openFile ->
-            fileEditorManager.getAllEditors(openFile).filter { it as? TextEditor != null }.forEach {
-                (it as TextEditor).editor.settings.isLineMarkerAreaShown = true
-            }
-        }
+        showLineMarker()
     }
 
     override fun beforeSuiteChosen() {
+        showLineMarker(false)
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun showLineMarker(isEnable: Boolean = true) {
         val fileEditorManager = FileEditorManager.getInstance(project)
         val openFiles = fileEditorManager.openFiles
         openFiles.filterNotNull().forEach { openFile ->
             fileEditorManager.getAllEditors(openFile).filter { it as? TextEditor != null }.forEach {
-                (it as TextEditor).editor.settings.isLineMarkerAreaShown = false
+                (it as TextEditor).editor.settings.isLineMarkerAreaShown = isEnable
             }
         }
     }
